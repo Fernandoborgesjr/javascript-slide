@@ -2,6 +2,12 @@ export class Slide {
   constructor({ slide, wrapper }) {
     this.slide = document.querySelector(slide);
     this.wrapper = document.querySelector(wrapper);
+    this.distance = {
+      finalPosition: 0,
+      startX: 0,
+      movement: 0,
+    };
+
     this.init();
   }
 
@@ -11,19 +17,44 @@ export class Slide {
     return this;
   }
 
+  /**
+   * @param {MouseEvent} event
+   */
   onStart(event) {
     event.preventDefault();
-    this.wrapper.addEventListener("mousemove", this.onStart);
+    this.distance.startX = event.clientX;
+    this.wrapper.addEventListener("mousemove", this.onMove);
   }
 
+  /**
+   * @param {MouseEvent} event
+   */
   onEnd(event) {
-    this.wrapper.removeEventListener("mouseup", this.onMove);
+    this.wrapper.removeEventListener("mousemove", this.onMove);
+    this.distance.finalPosition = this.distance.movePosition;
   }
 
-  onMove(event) {}
+  /**
+   * @param {MouseEvent} event
+   */
+  onMove({ clientX }) {
+    const finalPosition = this.updatePosition(clientX);
+    this.moveSlide(finalPosition);
+  }
+
+  updatePosition(clientX) {
+    this.distance.movement = (this.distance.startX - clientX) * 1.5;
+    return this.distance.finalPosition - this.distance.movement;
+  }
+
+  moveSlide(distX) {
+    this.distance.movePosition = distX;
+    this.slide.style.transform = `translate3d(${distX}px, 0, 0)`;
+  }
 
   addSlideEvents() {
     this.wrapper.addEventListener("mousedown", this.onStart);
+    this.wrapper.addEventListener("mouseup", this.onEnd);
   }
 
   bindEvents() {
