@@ -1,3 +1,5 @@
+import debounce from "./debounce.js";
+
 export class Slide {
   constructor({ slide, wrapper }) {
     this.slide = document.querySelector(slide);
@@ -7,6 +9,7 @@ export class Slide {
       startX: 0,
       movement: 0,
     };
+    this.activeClass = "active";
 
     this.init();
   }
@@ -16,6 +19,7 @@ export class Slide {
     this.transition(true);
     this.addSlideEvents();
     this.slidesConfig();
+    this.addResizeEvent();
     return this;
   }
 
@@ -40,6 +44,14 @@ export class Slide {
     this.moveSlide(activeSlide.position);
     this.slidesIndexNav(index);
     this.distance.finalPosition = activeSlide.position;
+    this.changeActiveClass();
+  }
+
+  changeActiveClass() {
+    this.slides.forEach((item) =>
+      item.element.classList.remove(this.activeClass)
+    );
+    this.slides[this.index.active].element.classList.add(this.activeClass);
   }
 
   slidesIndexNav(index) {
@@ -129,9 +141,19 @@ export class Slide {
     );
   }
 
+  addResizeEvent() {
+    window.addEventListener("resize", this.onResize);
+  }
+
+  onResize() {
+    this.slidesConfig();
+    this.changeSlide(this.index.active);
+  }
+
   bindEvents() {
     this.onStart = this.onStart.bind(this);
     this.onMove = this.onMove.bind(this);
     this.onEnd = this.onEnd.bind(this);
+    this.onResize = debounce(this.onResize.bind(this), 250);
   }
 }
