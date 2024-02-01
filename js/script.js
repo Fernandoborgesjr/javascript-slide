@@ -6,4 +6,4 @@ const slideNav = new SlideNav({
 })
 
 slideNav.addArrow(".prev", ".next");
-slideNav.addControl()
+slideNav.addControl('.custom-controls')
