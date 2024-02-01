@@ -14,7 +14,37 @@ export class Slide {
   init() {
     this.bindEvents();
     this.addSlideEvents();
+    this.slidesConfig();
     return this;
+  }
+
+  slidesConfig() {
+    this.slides = [...this.slide.children].map((element) => {
+      const position = this.slidePosition(element);
+      return { element, position };
+    });
+  }
+
+  slidePosition(slide) {
+    const margin = (this.wrapper.offsetWidth - slide.offsetWidth) / 2;
+    return -(slide.offsetLeft - margin);
+  }
+
+  chageSlide(index) {
+    const activeSlide = this.slides[index]
+    this.moveSlide(activeSlide.position);
+    this.slidesIndexNav(index);
+    this.distance.finalPosition = activeSlide.position
+
+  }
+
+  slidesIndexNav(index) {
+    const last = this.slides.length - 1;
+    this.index = {
+      prev: index ? index - 1 : undefined,
+      active: index,
+      next: index === last ? undefined : index + 1,
+    };
   }
 
   /**
