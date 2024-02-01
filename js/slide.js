@@ -2,7 +2,9 @@ import debounce from "./debounce.js";
 
 export class Slide {
   constructor({ slide, wrapper }) {
+    /** @type {HTMLLIElement} */
     this.slide = document.querySelector(slide);
+    /** @type {HTMLDivElement} */
     this.wrapper = document.querySelector(wrapper);
     this.distance = {
       finalPosition: 0,
@@ -10,6 +12,7 @@ export class Slide {
       movement: 0,
     };
     this.activeClass = "active";
+    this.changeEvent = new Event("slideChange");
 
     this.init();
   }
@@ -46,6 +49,7 @@ export class Slide {
     this.slidesIndexNav(index);
     this.distance.finalPosition = activeSlide.position;
     this.changeActiveClass();
+    this.wrapper.dispatchEvent(this.changeEvent)
   }
 
   changeActiveClass() {
@@ -155,8 +159,8 @@ export class Slide {
     this.onStart = this.onStart.bind(this);
     this.onMove = this.onMove.bind(this);
     this.onEnd = this.onEnd.bind(this);
-    this.activePrevSlide = this.activePrevSlide.bind(this)
-    this.activeNextSlide = this.activeNextSlide.bind(this)
+    this.activePrevSlide = this.activePrevSlide.bind(this);
+    this.activeNextSlide = this.activeNextSlide.bind(this);
     this.onResize = debounce(this.onResize.bind(this), 250);
   }
 }
